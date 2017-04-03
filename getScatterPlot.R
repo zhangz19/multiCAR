@@ -13,7 +13,7 @@ prefix <- './'  # folder you want to save images
 #   dats[[ids]] <- a[,c(5:8, 9:25)]
 # }
 # Xnams <- names(dats[[ids]]) # assume all the same
-# save(file='data4scatterPlot',dats)
+# save(file='data4scatterPlot',dats, Xnams)
 
 
 load('data4scatterPlot')

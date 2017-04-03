@@ -271,18 +271,9 @@ for(ids in 1:3){
   writeMat(paste('fulldat',ids,'.mat',sep=''),Y=as.matrix(Y),X=as.matrix(X),W=W)
 }
 
+
+
 ## read output from MATLAB and save it as Excel sheet
-#out <- readMat('outAll.mat')
-#
-#row.names(out$Allmat) <- rep(c('Intercept',names(X),'tau^2','gamma'),3)
-#write.csv(file='modeloutput.csv', out$Allmat)
-#
-#dics <- matrix(0,nrow(out$Alldic), ncol(out$Alldic)*4)
-#for(i in 1:nrow(dics)) dics[i,] <- rep(out$Alldic[i,], each=4)
-#write.csv(file='modeldic.csv', dics, row.names=F)
-
-
-
 out <- readMat('final.mat')
 
 load('data4scatterPlot') #dats, Xnams
@@ -293,13 +284,32 @@ row.names(mat)[1:(p+1)] <- c('Intercept',Xnams)
 write.csv(file='tmp.csv',mat)
 
 for(ids in 1:3){
-  mat <- cbind(dats[[1]][,1:4], out$yhats[[1]])
+  dat <- read.csv(file=fnams[ids])
+  if(ids > 1){ misind <- integer(); for(i in 1:nrow(X)) if(any(is.na(X[i,]))) misind <- c(misind,i) }
+  mat <- dats[[ids]][,1:4]; if(length(misind)) mat <- mat[-misind, ]
+  mat <- cbind(mat, out$yhats[[ids]])
   names(mat)[5:8] <- paste('predicted',names(mat)[1:4])
   mat <- mat[,c(1,5,2,6,3,7,4,8)]
   write.csv(file=paste('yMat_level',ids,'.csv', sep=''), mat, row.names=F)
 }
 
 
+out <- readMat('dicMat.mat')
+write.csv(file='dicMat.csv', out$dicMat, row.names=F)
+
+
+
+## for part-1 analysis
+out <- readMat('outAll.mat')
+
+row.names(out$Allmat) <- rep(c('Intercept',Xnams,'tau^2','gamma'),3)
+write.csv(file='modeloutput.csv', out$Allmat)
+
+dics <- matrix(0,nrow(out$Alldic), ncol(out$Alldic)*4)
+for(i in 1:nrow(dics)) dics[i,] <- rep(out$Alldic[i,], each=4)
+write.csv(file='modeldic.csv', dics, row.names=F)  # paste in modeloutput.xlxs
+
+dics[,seq(1,ncol(dics),by=4)]
 
 
 
